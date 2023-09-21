@@ -1,5 +1,7 @@
 @charset "utf-8";
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&family=Sunflower:wght@300;500;700&display=swap');
+@import url('font/remixicon.css');
+
 * {box-sizing: border-box;}
 
 body{
@@ -10,6 +12,11 @@ body{
 
 a,a:link{
     color:#444;
+    text-decoration: none;
+}
+
+a:hover{
+    color:#222;
 }
 
 /* 목록보기 디자인 */
@@ -61,3 +68,41 @@ a,a:link{
     border-color:#666 !important;
 
 }
+
+
+/* ###################### view.html ##################*/
+
+.view .title{
+    font-size: 18px;
+    border-bottom:3px solid #444;
+}
+
+.view .date, .view .write{
+    position: relative;
+}
+
+.view_info .date::after,
+.view_info .write::after{
+    content: "";
+    display: block;
+    width: 1px;
+    height: 10px;
+    position: absolute;
+    background-color: #999;
+    top:8px;
+    right:50px;
+}
+
+.view_info{
+    border-bottom: 1px solid #999;
+}
+
+/* max-width 이미지가 가로폭 넘어가지 않음 */
+.content img{ 
+    max-width: 100%;
+}
+
+.content p:first-child::first-letter{
+    font-size:30px;
+}
+

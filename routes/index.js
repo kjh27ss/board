@@ -12,4 +12,8 @@ router.get("/write", (req,res)=>{
     res.render("write", {title:"게시판 글쓰기"});
 });
 
+router.get("/view",(req,res)=>{
+    res.render("view" , {title:"내용"});
+})
+
 module.exports = router;
