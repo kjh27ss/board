@@ -22,20 +22,16 @@
             </tr>
         </thead>
         <tbody>
+            {% for rs in row %}
             <tr>
-                <td class="text-center">1</td>
-                <td class="title"><a href="/view">제목입니다.</a></td>
-                <td class="text-center">홍길동</td>
-                <td class="text-center">2023.09.20</td>
-                <td class="text-center">25</td>
+                <td class="text-center">{{rs.num}}</td>
+                <td class="title"><a href="/view/{{rs.num}}">{{rs.title}}</a></td>
+                <td class="text-center">{{rs.writer}}</td>
+                <td class="text-center">{{rs.wdate}}</td>
+                <td class="text-center">{{rs.hit}}</td>
             </tr>
-            <tr>
-                <td class="text-center">2</td>
-                <td class="title">제목입니다.</td>
-                <td class="text-center">홍길동</td>
-                <td class="text-center">2023.09.20</td>
-                <td class="text-center">25</td>
-            </tr>
+            {% endfor %}
+            
         </tbody>
     </table>
 </div>
