@@ -95,8 +95,8 @@ router.post("/edit/:num",(req,res)=>{
     const sql = "update ndboard set ? where num = ?";
 
     conn.query(sql,[{
-        title:rs.title,
-        contents:rs.content
+        title:title,
+        contents:content
     }, num],
 
     (err,res,fields)=>{
@@ -109,5 +109,47 @@ router.post("/edit/:num",(req,res)=>{
     res.redirect('/view/'+num);
 
 });
+
+router.post("/pwdlogin", (req,res)=>{
+    const {num,pass,title,content} = req.body;    
+    let sql = "select * from ndboard where num = ? and userpass = ?";
+    // num == userpass 면 출력
+    conn.query(sql, [num, pass],(err,row,fields)=>{
+        if(err)
+           console.log(err);
+        else{
+            if(row.length > 0){
+                sql = "update ndboard set ? where num = ?";
+                conn.query(sql,[{
+                    title:title,
+                    contents:content
+                }, num],(err,fields)=>{
+                    if(err){
+                        res.send('0');
+                        console.log(err);
+                    }else{                        
+                        res.send('1');
+                        console.log("수정성공");
+                    }
+                });
+                
+            }else{
+                res.send('0');
+            }
+        }
+    })
+});
+
+router.post('/delete/num:',function(req,res){
+    const { num } = req.params;
+    const sql = "delete from board where num = ?" 
+    conn.query(sql, [num],(err,row,fields)=>{
+        if(err)
+           console.log(err);
+        else{
+            console.log("삭제 성공");
+        }
+    })
+})
 
 module.exports = router;

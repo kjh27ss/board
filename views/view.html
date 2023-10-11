@@ -41,7 +41,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title text-danger">삭제</h5>
-                    <button type="button" class="close" data-dismiss="modal" arial-label="close">
+                    <button type="button" class="close" id="delete" data-dismiss="modal" arial-label="close">
                         <i class="ri-close-fill"></i>
                     </button>
                 </div> <!-- modal-header -->
@@ -65,5 +65,26 @@
 {% endblock %}
 
 {% block script %}
+
+<script>
+    $('#delete').click(function(){
+        const num = $("#num").val();
+        $.ajax({
+            method:'DELETE',
+            url:'/delete',
+            data: forms,
+            success:function(data){
+                const rs = parseInt(data);
+                if(rs > 0){
+                        alert("삭제!😎");
+                        location.href="/";
+                }else{
+                    alert("비밀번호를 다시 확인하세요.");
+                    return;
+                }
+            }         
+        })
+    })
+</script>
 {% endblock %}
 

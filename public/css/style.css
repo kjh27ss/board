@@ -63,10 +63,8 @@ a:hover{
 
 }
 
-.pagination .active a{
+.pagination .page-item.active .page-link{
     background-color: #666 !important;
-    border-color:#666 !important;
-
 }
 
 
@@ -81,8 +79,8 @@ a:hover{
     position: relative;
 }
 
-.view_info .date::after,
-.view_info .write::after{
+.view .date::after,
+.view .write::after{
     content: "";
     display: block;
     width: 1px;
