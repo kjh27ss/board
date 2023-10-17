@@ -131,8 +131,7 @@ router.post("/pwdlogin", (req,res)=>{
                         res.send('1');
                         console.log("수정성공");
                     }
-                });
-                
+                });                
             }else{
                 res.send('0');
             }
@@ -140,16 +139,79 @@ router.post("/pwdlogin", (req,res)=>{
     })
 });
 
-router.post('/delete/num:',function(req,res){
-    const { num } = req.params;
-    const sql = "delete from board where num = ?" 
-    conn.query(sql, [num],(err,row,fields)=>{
-        if(err)
+// 게시물 번호와 비번확인
+// 성공1, 실패 0
+
+router.post("/del",(req,res)=>{
+    const { delpass,delnum } = req.body;
+    let sql = "select count(*) as ct from ndboard where num = ? and userpass =?"; 
+    conn.query(sql, [delnum,delpass],(err,row,fields)=>{
+        if(err){
+            res.send('0');
            console.log(err);
-        else{
-            console.log("삭제 성공");
+        }else{
+            if(row[0].ct > 0){
+                //삭제쿼리 작성
+                sql = "delete from ndboard where num = ?";
+                conn.query(sql, delnum,(err,fields)=>{
+                    if(err){
+                        console.log(err);
+                        res.send('0');
+                    }else{
+                        console.log('삭제성공');
+                        res.send('1');
+                    }
+                });
+            }else{
+                console.log("비번 틀림"+row[0].ct);
+                res.send('0');
+            }
         }
     })
+})
+
+router.get("/rewrite/:num",(req,res)=>{
+    const {num} = req.params;
+    const sql = "select num, orNum, grNum, grLayer from ndboard where num=?";    
+
+    conn.query(sql, num, (err,row,fields)=>{
+        if(err){
+            console.log(err);
+        }
+        else{
+            const rs = row[0];
+            res.render('rewrite',{title:'답변글 등록',rs});
+        }        
+    })
+})
+.post("/rewrite", (req,res)=>{
+    const {ornum, grnum, grlayer, writer, pass, title,content} = req.body;
+    const userid ='guest'; // 나중에 회원제 만들면서 수정예정
+    // 목록의 grNum이 받은 grNum 보다 클 경우 하나씩 업데이트
+    let sql = "update ndboard set grNum = grNum + 1 where orNum = ? and grNum > ?";
+    conn.query(sql,[ornum,grnum]);
+
+    // insert
+    sql = "insert into ndboard(orNum, grNum, grLayer, writer,userid, userpass,title,contents) values(?,?,?,?,?,?,?,?)";
+
+    conn.query(sql, [
+        parseInt(ornum),
+        parseInt(grnum)+1,
+        parseInt(grlayer)+1,
+        writer,
+        userid,
+        pass,
+        title,
+        content
+    ], (err,row,fields)=>{
+        if(err){
+            console.log(err);
+        }else{
+            console.log(row.insertId);
+        };
+        res.redirect("/");
+    });
+
 })
 
 module.exports = router;

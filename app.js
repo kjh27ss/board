@@ -3,9 +3,6 @@ const dotenv = require("dotenv");
 const path = require("path");
 const nunjucks = require("nunjucks");
 
-
-
-
 // routes/index.js 가져오기
 const indexRouter = require('./routes');
 
@@ -52,5 +49,5 @@ app.get("/", (req,res)=>{
 });
 
 app.listen(app.get('port'), ()=>{
-    console.log(app.get('port')+"에서 응답 대기중..");
+    console.log(app.get('port')+"에서 응답 대기중..http://localhost:8080");
 });
