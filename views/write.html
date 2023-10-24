@@ -26,8 +26,7 @@
         <div class="col-md-11">
             <input type="text" name="title" class="form-control" placeholder="제목" id="title" required/>
         </div>
-    </div>
-    
+    </div>    
 
     <div class="col-md-12 row align-items-center my-3">
         <label class="col-md-1" for="title">내용</label>
@@ -35,8 +34,7 @@
             <textarea id="content" name="content" class="form-control"></textarea>
         </div>
             
-    </div>
-    
+    </div>   
 
     <div class="col-md-12 text-center">
         <button type="reset" class="btn btn-danger mr-5">취 소</button>
@@ -44,7 +42,6 @@
     </div>
     <input type="hidden" name="userid" value={{userid}} />
 </form>
-
 
 {% endblock %}
 
@@ -57,9 +54,48 @@
         $("#content").summernote({
             tabsize:2,
             height:300,
-            lang:"ko-KR"
+            lang:"ko-KR",
+            callbacks:{
+                onImageUpload:function(files){
+                    // 업로드 파일 등록
+                    upFile(files[0], this);                    
+                }
+            },
+            // editor 사진 제거시
+            // onMediaDelete : function(target){
+            //     if(postSaveViewDto.id == null){
+            //         deleteFile
+            //     }
+            // }
         });
     });
+
+    function upFile(file, editor){
+        data  = new FormData();
+        data.append("img", file); // id img로 file form 데이터 추가
+
+        $.ajax({
+            url: "/write/imginsert",
+            type: "POST",
+            cache: false,
+            contentType: false,
+            //multipart/form-data 형태로 넘겨야 함.
+            enctype: "multipart/form-data",
+            processData: false,
+            data: data,
+            success: function(res){
+                const imgurl = $("<img>").attr({
+                    'src': "/images/"+res,  //json 형태로 주소를 반환받아 넣는다.
+                    'crossorigin': 'anonymous' //cors 에러 방지
+                });
+                $("#content").summernote("insertNode", imgurl[0]);
+                //insertNode 는 html tag를 summernote 에디터창에 삽입하는 기능
+            },
+            error: function(err){
+                console.error(err);
+            }
+        })
+    }
 </script>
 
 {% endblock %}

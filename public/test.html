@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #listbox{
+            list-style:none;
+            padding:0;
+            display: flex;
+        }
+
+        #listbox li{
+            padding:15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <ul id="listbox">
+
+    </ul>
+    <script src="js/jquery.min.js"></script>
+    <script>
+        /*
+            listScale : 한페이지에 출력할 게시물 수
+            pageScale : 한페이지에 출력할 페이지 수
+            totalCount : 전체 게시글 수
+            start : 시작점 
+        */
+
+        $(function(){
+            $('#listbox').html(getPaging(10,15,678,25, '/public/test.html'));
+        });
+
+        
+  
+    </script>    
+</body>
+</html>

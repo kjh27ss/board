@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 const nunjucks = require("nunjucks");
+const fs = require("fs");
 
 // routes/index.js 가져오기
 const indexRouter = require('./routes');
@@ -20,7 +21,7 @@ nunjucks.configure('views',{
 });
 
 app.use('/', express.static(path.join(__dirname,'public'))); // public폴더를 join
-
+app.use(express.static(path.join(__dirname,"data"))); // file upload
 app.use(express.json());
 
 app.use(express.urlencoded({ extended:false })); 
@@ -40,9 +41,6 @@ app.use((err, req, res, next)=>{
     res.status(err.status || 500);
     res.render('error');
 });
-
-
-
 
 app.get("/", (req,res)=>{
     res.send("Hello Express");

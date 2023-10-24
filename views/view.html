@@ -1,8 +1,10 @@
 {% extends 'layout.html' %}
 {% block style %}
-
+<link rel="stylesheet" href="/css/summernote-bs4.min.css">
 {% endblock %}
-{% block content %}<h1 class="text-center mb-5">{{title}}</h1>
+
+{% block content %}
+<h1 class="text-center mb-5">{{title}}</h1>
     <div class="row flex-column view">    
         <div class="title py-3 pl-2">
                 {{row[0].title}}
@@ -21,11 +23,7 @@
             <a href="#" class="mr-3"><i class="ri-instagram-line"></i></a>                
         </div>            
     </div>
-    <div class="content py-5">
-        <!-- <p>보내는 풍부하게 청춘이 풍부하게 위하여 청춘을 목숨을 투명하되 끓는다. 피어나기 가지에 시들어 사막이다. 바로 얼마나 우는 보라. 얼음이 방황하였으며, 이것을 행복스럽고 이것이다. 눈에 청춘 청춘은 위하여서, 봄날의 우리의 끝까지 얼마나 칼이다. 천지는 가는 낙원을 주는 이상의 갑 없으면, 앞이 그들은 것이다. 앞이 주며, 착목한는 얼마나 귀는 목숨을 이것이다. 품으며, 이상, 불어 귀는 풀이 말이다. 인생을 가진 그들의 이상 피부가 인류의 이것이다. 광야에서 착목한는 인류의 있는 청춘의 같이, 방황하여도, 힘차게 천하를 있으랴?</p>
-        <p>무엇을 살았으며, 실로 꾸며 피어나기 소리다.이것은 사막이다. 사라지지 천하를 피고, 바이며, 것이다. 가슴이 끓는 설산에서 것이다.보라, 이상을 끝까지 봄바람이다. 하는 이상의 아름답고 이것이다. 목숨이 장식하는 생명을 것이다. 꾸며 얼마나 곧 청춘 낙원을 가는 이것이다. 발휘하기 가는 얼음과 만천하의 미인을 그들은 아니다. 싸인 열락의 내는 그와 그들을 동력은 이 교향악이다. 일월과 능히 뛰노는 가장 우리의 되는 앞이 끓는 천지는 있다. 되려니와, 끓는 있는 얼마나 얼마나 실현에 이는 뼈 청춘의 운다.</p>
-        <p>사는가 우리의 우리의 운다. 구할 위하여, 아니더면, 싸인 사막이다. 뼈 이 우는 옷을 가지에 황금시대를 풀이 평화스러운 아니다. 눈에 무엇이 그들을 사람은 얼음과 이 가치를 투명하되 긴지라 아름다우냐? 충분히 아니더면, 피어나는 아름다우냐? 공자는 얼음 그들의 가슴이 것은 쓸쓸한 것이다. 위하여, 얼음과 인생에 어디 이것이다. 돋고, 따뜻한 보배를 이 찾아다녀도, 못하다 끝까지 수 사막이다. 가는 그들은 부패를 보배를 것이다. 커다란 청춘의 얼마나 없는 일월과 같지 것이다. 주는 눈에 이상 튼튼하며, 청춘은 몸이 없는 우리 있다.</p>
-             -->
+    <div class="content py-5">        
         {{row[0].contents | safe}}
     </div>
     <div class="row justify-content-end mb-5">
@@ -60,29 +58,136 @@
         </div> <!-- modal-dialog -->
     </div>
 
+    <hr/>
+    <div class="row mt-5">
+        <ul class="list-group">
+            {% for res in rs %}
+                <li class="list-group-item d-flex p-4">
+                    <div class="col-2">
+                        <h3>{{res.username}} <small>(2023-10-20)</small></h3>
+                    </div>
+                    <div class="col-9">
+                        <p>{{res.comment}}</p>
+                    </div>
+                    <div class="col-1 text-right"></div>
+                    <!-- <button type="buttn" class="btn btn-dark text-white" data-target="#listModal" data-toggle="modal">목록</button>            -->
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- <div class="row mt-5">
+        <ul class="list-group">
+            {% for res in rs %}
+                <div class="list d-flex">
+                    <li class="list-group-item d-flex p-4">
+                        <div class="col-2">
+                            <h3>{{res.username}} <small>(2023-10-19)</small></h3>
+                        </div>
+                        <div class="col-7">
+                            <p>{{res.comment}}</p>
+                        </div>
+                        <div class="col-1 text-right"></div>                                          
+                    </li>
+                    <div class="col-2">
+                        <button type="buttn" class="btn btn-dark text-white px-3 mr-3" data-target="#listModal" data-toggle="modal">목록</button>
+                    </div>
+            </div>            
+            {% endfor %}
+        </ul>
+    </div> -->
+    <!-- bootstrap modal -->
+    <!-- <div class="modal fade" role="dialog" id="listModal" tabindex="-1" aria-labelledby="listModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary">댓글 수정</h5>
+                    <button type="button" class="close" id="update" data-dismiss="modal" arial-label="close">
+                        <i class="ri-close-fill"></i>
+                    </button>
+                </div> 
+                <form>
+                <div class="modal-body">
+                    <p>이름</p>                        
+                    <input type="text" name="name"/>
+                    <p>내용</p>                        
+                    <input type="text" name="content"/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">수정</button>
+                    <button type="button" class="btn btn-danger" id="del">삭제</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div> -->
+
+    <form name="comment_form" method="post" id="comment_form">
+        <input type="hidden" name="ndboard_num" value="{{row[0].num}}" />
+            <div class="row mt-5">
+                <div class="col-3">
+                    <label>이름</label>
+                    <input type="text" name="username" class="form-control" />
+                </div>
+                <div class="col-3">
+                    <label>비밀번호</label>
+                    <input type="password" name="userpass" class="form-control" />
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-10">
+                    <textarea id="memo-content" name="content" class="form-control"></textarea>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-comment">전송</button>
+                </div>
+            </div>
+
+    </form>
+
 {% endblock %}
 
 {% block script %}
 
-<!-- <script>
-    $('#delete').click(function(){
-        const num = $("#num").val();
-        $.ajax({
-            method:'DELETE',
-            url:'/delete',
-            data: forms,
-            success:function(data){
-                const rs = parseInt(data);
-                if(rs > 0){
-                        alert("삭제!😎");
-                        location.href="/";
-                }else{
-                    alert("비밀번호를 다시 확인하세요.");
-                    return;
+<script src="/js/summernote-bs4.min.js"></script>
+<script src="/js/lang/summernote-ko-KR.min.js"></script>
+<script>
+    $(function(){
+        $("#memo-content").summernote({
+            tabsize:2,
+            height:150,
+            lang:"ko-KR",
+            toolbar:[
+                ['style',['style']],
+                ['font',['bold','under-line','clear']],
+                ['color',['color']]
+            ]
+        });
+        $(".btn-comment").click(function(){
+            const data = $("#comment_form").serialize(); // form에 담긴 내용이 js type으로 변경
+            // console.log(data)
+            $.ajax({
+                url:'/comment_write',
+                type:'post',
+                dataType:'json',
+                data:data,
+                success:function(rs){
+                    const res = parseInt(rs);
+                    if(res > 0){
+                        alert("성공적으로 등록되었습니다.");
+                        location.reload();
+                    }else{
+                        alert("문제가 발생했습니다.");
+                    }
+                },
+                error:function(err){
+                    console.log(err);
                 }
-            }         
+            })
         })
-    })
-</script> -->
+    });
+</script>
+
 {% endblock %}
 
