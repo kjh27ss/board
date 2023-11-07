@@ -46,6 +46,18 @@ app.get("/", (req,res)=>{
     res.send("Hello Express");
 });
 
+// 서버에서 query string
+// app.get("/search", (req,res)=>{
+//     console.log(req.query.value);
+//     db.collection('post').find(req.query.value).toArray(function(err,result){
+//         console.log(result);
+//     })
+// })
+app.get('/', (req,res)=>{
+    res.send("전송완료");
+    console.log(req.body);
+})
+
 app.listen(app.get('port'), ()=>{
     console.log(app.get('port')+"에서 응답 대기중..http://localhost:8080");
 });

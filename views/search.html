@@ -3,17 +3,14 @@
 {% block content %}
 
 <h1 class="text-center mb-5">{{title}}</h1>
-<!-- 검색 -->
-<form action="/" method="get">
-    <div class="row mb-3">
-        <div class="col-md-8"></div>
-        <div class="col-md-4 text-right">
-            <input type="form-control" id="search-input" placeholder="검색어를 입력해주세요.">
-            <button class="btn btn-primary" id="search">검 색</button>
-        </div>
+<div class="row mb-3">
+    <div class="col-md-8"></div>
+    <div class="col-md-4 text-right">
+        <input type="form-control" id="search-input">
+        <button class="btn btn-secondary" id="search">검 색</button>
     </div>
-</form>
-<div class="row justify-content-center">    
+</div>
+<div class="row justify-content-center">
     <table class="bbslist table-hover">
         <colgroup>
             <col width="10%">
@@ -44,7 +41,8 @@
                     {% if rs.memoCount != 0 %}
                         ({{rs.memoCount}})
                     {% endif %}
-                </td>                    
+                </td>
+                    
                 <td class="text-center">{{rs.writer}}</td>
                 <td class="text-center">{{rs.wdate}}</td>
                 <td class="text-center">{{rs.hit}}</td>
@@ -64,7 +62,7 @@
         <div class="col-md-3 text-right">
             <a href="#" class="btn btn-secondary mr-4">목록보기</a>
             <a href="/write" class="btn btn-secondary">글쓰기</a>
-        </div>        
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -76,11 +74,10 @@
             $('.pagination').html(getPaging('{{maxList}}', 10, '{{totalCount}}', '{{page}}', "/"));
         });
 
-        $("#search").click(function(){ 
-            let searchval = $('#search-input').val(); // input에 입력된 값
-            // 검색 버튼 누르면 경로로 이동 , get 요청
-            window.location.replace(`/?value=${searchval}`);
-        });
+        // $("#search").click(function(){
+        //     let input = $('#search-input').val();
+        //     window.location.replace('/search?value=' + input)
+        // });
     </script>
 
  {% endblock %}

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const upload = require("../upload");
+const rmfile = require("../lib/removefile");
 const fs = require("fs-extra");
 
 //mysql 연결
@@ -10,6 +11,22 @@ mysqlConnObj.open(conn);  //연결 출력
 
 //기본 주소 설정
 router.get('/', (req, res) => {
+    // 쓰레기 파일 삭제 : 출력하기 전 검색해서 지움
+    let que = "select num, filename from ndfile where bbs_num is null";
+    const deldir = './data/images/';
+    conn.query(que, (err, row, fields)=>{
+      if(err){
+         console.error(err)
+        }else{
+            if(row.length > 0){
+               for(let f of row){
+                  rmfile(deldir + f.filename, ''); // file 삭제
+                  conn.query("delete from ndfile where num="+f.num) // 파일 삭제
+                                    
+               }
+            }
+        }
+    })
     let page = 1;
     if(req.query.page){
       page = parseInt(req.query.page);
@@ -51,19 +68,21 @@ router.get("/write", (req, res)=>{
 
 router.post("/write", (req, res)=>{
    const rs = req.body;
-   let sql = "insert into ndboard (orNum, grNum, writer, userid, userpass, title, contents) values (?,?,?,?,?,?,?)";
+   let sql = "insert into ndboard (orNum, grNum, writer, userid, userpass, title, contents, imnum) values (?,?,?,?,?,?,?,?)";
    conn.query(sql,[
       0, 1, rs.writer, 'guest', 
       rs.pass,
       rs.title,
-      rs.content
+      rs.content,
+      rs.imnum
    ], (err, res, fields)=> {
-      if(err) {
+      if(err){ 
         console.log(err);
       }else{
          console.log(res.insertId);
          sql = "update ndboard set ? where num ="+res.insertId;
-         conn.query(sql, { orNum: res.insertId },
+         const sql2 = "update ndfile set bbs_num="+res.insertId;
+         conn.query(sql, { orNum: res.insertId },         
          (err, res,fields)=>{
             if(err) 
               console.log(err);
@@ -71,24 +90,63 @@ router.post("/write", (req, res)=>{
                 console.log('업데이트 성공');
             }
          });
+         conn.query(sql2);
       }
    });
    res.redirect('/');
 });
 
+router.post("/write/imgdelete", (req, res, next)=>{
+   const src= req.body.src.split("/"); // 전체 경로 http://~~~ .png
+   const src_name = src[src.length-1];
+   const deldir = './data/images/' + src_name;
+   console.log(deldir);
+   rmfile(deldir, ()=>{
+      console.log("파일 삭제 완료!");
+   })
+   res.send("1");
+});
+
 router.post("/write/imginsert", upload.single("img"), async(req, res, next)=>{
     try{
-      let imgurl;
+      let imnum, sql;
       console.log(req.file);
+
       if(req.file !== undefined){
-        imgurl = req.file.filename;
-        console.log(imgurl);
-        res.json(imgurl);
+         if(req.body.imnum){
+            imnum = req.body.imnum;
+         }else{
+            imnum = new Date().getTime();
+         }
+         sql = "insert into ndfile (filename, orfilename, mimetype, filesize, imnum) values (?,?,?,?,?)";
+         conn.query(sql, [
+            req.file.filename,
+            req.file.originalname,
+            req.file.mimetype,
+            req.file.size,
+            imnum
+         ], (err, rs, fields)=>{
+            if(err){
+               console.log(err);
+            }else{
+               console.log(rs.insertId);
+               const data = {
+                  imnum,
+                  imgurl: req.file.filename
+               };
+               res.json(data);
+            }
+         });
       }
     }catch(err){
       console.error(err);
     }
 });
+
+// search
+router.get("/", (req,res)=>{
+   console.log(req.query.value);
+})
 
 router.get("/view/:num", (req, res)=>{
    const { num } = req.params;
@@ -178,14 +236,42 @@ router.post("/pwdlogin", (req, res) => {
  */
 router.post("/del", (req, res)=>{
    const { delpass, delnum } = req.body;
-   let sql = "select count(*) as ct from ndboard where num=? and userpass=?";
+   let sql = "select count(*) as ct from ndboard where num=? and userpass=?"; // 1. password 확인
    conn.query(sql, [delnum, delpass], (err, row, fields)=>{
       if(err){
          console.log(err);
          res.send('0');
       }else{
          if(row[0].ct > 0) {
-            //삭제쿼리 작성
+            //삭제 쿼리 작성
+            // 파일을 읽어서 코멘트가 있는지 확인, 첨부파일 있는지 확인
+            const sql1 = "select * from ndboard where num = ?"; // 2. 파일 한번 더읽음
+            conn.query(sql1, delnum, (err, row, fields)=>{
+               if(err){ 
+                  console.log(err);
+               }else{
+                  if(row[0].memocount>0){ // memocount
+                     conn.query("delete from ndboard_comment where bbs_num = "+row[0].num);
+                  }
+                  // 파일이 있는지 읽어 옴
+                  const sql2 = "select * from ndfile where bbs_num = "+row[0].num;
+                  conn.query(sql2, (err, rs, fields)=>{ // rs 배열
+                     if(rs.length > 0){
+                        const deldir = './data/images';
+                        for(let r of rs){
+                           // 파일 삭제 로직
+                           let filePath = deldir + "/" + r.filename;
+                           console.log(r.filename);
+                           rmfile(filePath, ()=>{
+                              console.log("파일 삭제 완료!");
+                           });
+                        }
+                        conn.query("delete from ndfile where bbs_num = "+row[0].num);
+                     }
+                  })
+               }
+            })
+            // 코멘트 삭제 , 파일 삭제, 본문 삭제
             sql = "delete from ndboard where num = ?";
             conn.query(sql, delnum, (err, fields)=>{
                if(err){
